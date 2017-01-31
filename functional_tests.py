@@ -1,14 +1,23 @@
 from selenium import webdriver
+import unittest
 
-browser = webdriver.Firefox()
+class NewVisitorTest(unittest.TestCase):
+    def setUp(self):
+        self.browser = webdriver.Firefox()
+        self.browser.implicitly_wait(3)
 
-# Wilson opens his browser to his favorite to-do list app
-browser.get('http://localhost:8000')
+    def tearDown(self):
+        self.browser.quit()
 
-# He notices that he has reached the proper page
-assert 'Django' in browser.title
+    def test_can_start_a_list_and_retrieve_it_later(self):
+        # Wilson opens his browser to his favorite to-do list app
+        self.browser.get('http://localhost:8000')
 
-# He has the opportunity to create a to-do list item
+        # He notices that the page title and header mention to-do lists
+        self.assertIn('To-Do', self.browser.title)
+        self.fail('Finish the test!')
+
+        # He has the opportunity to create a to-do list item
 
 # Like any obedient developer, he creates a reminder to:
 # 'Continue obeying the Test Goat'
@@ -27,3 +36,6 @@ assert 'Django' in browser.title
 # still there
 
 # Satisfied, he closes the browser window
+
+if __name__ == '__main__':
+    unittest.main(warnings='ignore')
