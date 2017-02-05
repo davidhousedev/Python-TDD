@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import unittest
+import time
 
 
 class NewVisitorTest(unittest.TestCase):
@@ -35,21 +36,30 @@ class NewVisitorTest(unittest.TestCase):
         # When he hits enter, the page updates and now lists his new
         # to-do: '1: Continue obeying the Test Goat' as a to-do item
         inputbox.send_keys(Keys.ENTER)
+        time.sleep(1)
 
         table = self.browser.find_element_by_id('id_list_table')
         rows = table.find_elements_by_tag_name('tr')
-        self.assertTrue(
-            any(row.text == '1: Obey the Testing Goat' for row in rows),
-            'New to-do item did not appear in table'
-        )
+        self.assertIn('1: Obey the Testing Goat', [row.text for row in rows])
 
         # There is still a text box inviting Wilson to add another item
         # so he adds 'Step carefully along the cliff's wall'
+        inputbox = self.browser.find_element_by_id('id_new_item')
+        inputbox.send_keys('Step carefully along the cliff wall')
+        inputbox.send_keys(Keys.ENTER)
+        time.sleep(1)
+
+        # The page updates again, displaying both items on the list
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertIn('1: Obey the Testing Goat', [row.text for row in rows])
+        self.assertIn(
+            '2: Step carefully along the cliff wall',
+            [row.text for row in rows]
+        )
+
+        # Wilson is presented with a URL unique to his list
         self.fail('Finish the test!')
-
-# The page updates again, displaying both items on the list
-
-# Wilson is presented with a URL unique to his list
 
 # He visits the provided URL, and notices that his list is
 # still there
